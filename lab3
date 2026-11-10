@@ -1,34 +1,7 @@
-SELECT * FROM faculties;
-SELECT * FROM groups;
-
-ALTER TABLE groups DROP CONSTRAINT IF EXISTS fk_faculty;
-
-INSERT INTO groups (group_number, faculty_code, max_people, curator) 
-VALUES ('Т-11', 999, 20, 'Иванов И.И.');
+SELECT f.faculty_code, f.faculty_name, g.group_number, g.max_people, g.curator
+FROM faculties f
+LEFT JOIN groups g ON f.faculty_code = g.faculty_code;
 
 SELECT f.faculty_code, f.faculty_name, g.group_number, g.max_people, g.curator
 FROM faculties f
-LEFT JOIN groups g ON f.faculty_code = g.faculty_code
-ORDER BY f.faculty_code;
-
-SELECT f.faculty_code, f.faculty_name, g.group_number, g.max_people, g.curator
-FROM faculties f
-RIGHT JOIN groups g ON f.faculty_code = g.faculty_code
-ORDER BY g.group_number;
-
-SELECT f.faculty_code, f.faculty_name, g.group_number, g.max_people, g.curator
-FROM faculties f
-FULL OUTER JOIN groups g ON f.faculty_code = g.faculty_code;
-
-SELECT g.group_number, g.faculty_code AS missing_faculty_code
-FROM groups g
-LEFT JOIN faculties f ON g.faculty_code = f.faculty_code
-WHERE f.faculty_code IS NULL;
-
-DELETE FROM groups 
-WHERE faculty_code = 999;
-
-ALTER TABLE groups ADD CONSTRAINT fk_faculty 
-FOREIGN KEY (faculty_code) REFERENCES faculties(faculty_code);
-
-SELECT * FROM groups;
+RIGHT JOIN groups g ON f.faculty_code = g.faculty_code;
