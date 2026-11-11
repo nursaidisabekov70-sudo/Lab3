@@ -1,7 +1,32 @@
-SELECT f.faculty_code, f.faculty_name, g.group_number, g.max_people, g.curator
-FROM faculties f
-LEFT JOIN groups g ON f.faculty_code = g.faculty_code;
 
-SELECT f.faculty_code, f.faculty_name, g.group_number, g.max_people, g.curator
+-- Задание 1. LEFT JOIN
+
+SELECT
+    f.faculty_code,
+    f.faculty_name,
+    f.foundation_date,
+    f.activity_type,
+    f.max_students,
+    g.group_number,
+    g.max_people,
+    g.curator
 FROM faculties f
-RIGHT JOIN groups g ON f.faculty_code = g.faculty_code;
+LEFT JOIN groups g
+ON f.faculty_code = g.faculty_code;
+
+
+-- Задание 2. RIGHT JOIN
+
+SELECT
+    f.faculty_code,
+    f.faculty_name,
+    f.foundation_date,
+    f.activity_type,
+    f.max_students,
+    g.group_number,
+    g.max_people,
+    g.faculty_code AS group_faculty_code,
+    g.curator
+FROM faculties f
+RIGHT JOIN groups g
+ON f.faculty_code = g.faculty_code;
