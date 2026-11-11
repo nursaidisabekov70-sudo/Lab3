@@ -1,5 +1,7 @@
 
--- Задание 1. LEFT JOIN
+-- Задание 1. Вывести информацию обо всех факультетах
+-- и обучающихся на них группах с помощью LEFT JOIN.
+-- Если у факультета нет групп, оставить пустые поля.
 
 SELECT
     f.faculty_code,
@@ -15,7 +17,9 @@ LEFT JOIN groups g
 ON f.faculty_code = g.faculty_code;
 
 
--- Задание 2. RIGHT JOIN
+-- Задание 2. Вывести информацию обо всех группах
+-- и факультетах, к которым они относятся, с помощью RIGHT JOIN.
+-- Если факультет отсутствует в базе данных, оставить пустые поля.
 
 SELECT
     f.faculty_code,
@@ -30,3 +34,38 @@ SELECT
 FROM faculties f
 RIGHT JOIN groups g
 ON f.faculty_code = g.faculty_code;
+
+
+-- Задание 3. Нарушить ссылочную целостность данных.
+-- Временно отключить триггеры и добавить группу
+-- с несуществующим кодом факультета.
+
+ALTER TABLE groups DISABLE TRIGGER ALL;
+
+INSERT INTO groups
+    (group_number, max_people, faculty_code, curator)
+VALUES
+    ('T-99', 20, 999, 'Unknown');
+
+ALTER TABLE groups ENABLE TRIGGER ALL;
+
+
+-- Задание 4. Выявить нарушение ссылочной целостности.
+-- Найти группы, для которых отсутствует соответствующий факультет.
+
+SELECT
+    g.group_number,
+    g.faculty_code,
+    f.faculty_name
+FROM groups g
+LEFT JOIN faculties f
+ON g.faculty_code = f.faculty_code
+WHERE f.faculty_code IS NULL;
+
+
+-- Задание 5. Восстановить ссылочную целостность данных.
+-- Удалить тестовую запись с несуществующим факультетом.
+
+DELETE FROM groups
+WHERE group_number = 'T-99';
+
