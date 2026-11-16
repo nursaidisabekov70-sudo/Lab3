@@ -1,71 +1,27 @@
+-- Шаг 1. Нарушение ссылочной целостности данных
+SET session_replication_role = 'replica';
+INSERT INTO groups (faculty_code, group_number, max_people) VALUES (999, 'ГРУППА-99', 15);
+SET session_replication_role = 'origin';
 
--- Задание 1. Вывести информацию обо всех факультетах
--- и обучающихся на них группах с помощью LEFT JOIN.
--- Если у факультета нет групп, оставить пустые поля.
-
-SELECT
+-- Шаг 2. Запрос с левосторонним соединением (LEFT JOIN)
+SELECT 
     f.faculty_code,
     f.faculty_name,
-    f.foundation_date,
     f.activity_type,
-    f.max_students,
     g.group_number,
-    g.max_people,
-    g.curator
+    g.max_people
 FROM faculties f
-LEFT JOIN groups g
-ON f.faculty_code = g.faculty_code;
+LEFT JOIN groups g ON f.faculty_code = g.faculty_code;
 
-
--- Задание 2. Вывести информацию обо всех группах
--- и факультетах, к которым они относятся, с помощью RIGHT JOIN.
--- Если факультет отсутствует в базе данных, оставить пустые поля.
-
-SELECT
+-- Шаг 3. Запрос с правосторонним соединением (RIGHT JOIN)
+SELECT 
     f.faculty_code,
     f.faculty_name,
-    f.foundation_date,
     f.activity_type,
-    f.max_students,
     g.group_number,
-    g.max_people,
-    g.faculty_code AS group_faculty_code,
-    g.curator
+    g.max_people
 FROM faculties f
-RIGHT JOIN groups g
-ON f.faculty_code = g.faculty_code;
+RIGHT JOIN groups g ON f.faculty_code = g.faculty_code;
 
-
--- Задание 3. Нарушить ссылочную целостность данных.
--- Временно отключить триггеры и добавить группу
--- с несуществующим кодом факультета.
-
-ALTER TABLE groups DISABLE TRIGGER ALL;
-
-INSERT INTO groups
-    (group_number, max_people, faculty_code, curator)
-VALUES
-    ('T-99', 20, 999, 'Unknown');
-
-ALTER TABLE groups ENABLE TRIGGER ALL;
-
-
--- Задание 4. Выявить нарушение ссылочной целостности.
--- Найти группы, для которых отсутствует соответствующий факультет.
-
-SELECT
-    g.group_number,
-    g.faculty_code,
-    f.faculty_name
-FROM groups g
-LEFT JOIN faculties f
-ON g.faculty_code = f.faculty_code
-WHERE f.faculty_code IS NULL;
-
-
--- Задание 5. Восстановить ссылочную целостность данных.
--- Удалить тестовую запись с несуществующим факультетом.
-
-DELETE FROM groups
-WHERE group_number = 'T-99';
-
+-- Шаг 4. Восстановление ссылочной целостности данных
+DELETE FROM groups WHERE faculty_code = 999;
